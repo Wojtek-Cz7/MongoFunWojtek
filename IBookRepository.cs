@@ -29,5 +29,8 @@ namespace MongoFunWojtek
 
         Task<long> CountBooksAsync();
 
+        Task<long> CountBooksNewerThanAsync(DateTime dateTime);
+        Task<long> CountBooksWithAtLeastOneReviewAsync();
+
     }
 }
