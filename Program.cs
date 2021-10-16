@@ -1,12 +1,38 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace MongoFunWojtek
 {
-    class Program
+    static class Program
     {
-        static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             Console.WriteLine("Hello Monogo!");
+
+            var hostBuilder = new HostBuilder();
+            hostBuilder.ConfigureHostConfiguration(builder =>
+            {
+                builder.AddEnvironmentVariables("DOTNET_");
+                builder.AddCommandLine(args);
+            });
+
+            hostBuilder.ConfigureAppConfiguration(builder => { builder.AddJsonFile("appsettings.json"); });
+
+            hostBuilder.ConfigureServices((context, collection) =>
+            {
+                collection.AddLogging(builder =>
+                {
+                    builder.AddConfiguration(context.Configuration.GetSection("Logging"));
+                    builder.AddConsole();
+                });
+            }
+             );
+
+            await hostBuilder.Build().RunAsync();
         }
     }
 }
