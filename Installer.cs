@@ -46,6 +46,8 @@ namespace MongoFunWojtek
 
 
             // kolejność wstrzykiwania to kolejność uruchomień
+
+            collection.AddSingleton<IBookRepository, BookRepository>();
             collection.AddHostedService<MongoInitService>();
             collection.AddHostedService<UserInterfaceService>();
         }
