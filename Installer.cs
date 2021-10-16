@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +26,16 @@ namespace MongoFunWojtek
             collection.AddSingleton<MongoUrl>(new MongoUrl(context.Configuration.GetSection("Mongo").Get<string>()));
             collection.AddSingleton(x =>
             {
+                var logger = x.GetService<ILogger<MongoClientSettings>>();
                 var mongoUrl = x.GetService<MongoUrl>();
                 var settings = MongoClientSettings.FromUrl(mongoUrl);
+                settings.ClusterConfigurator = builder =>
+                {
+                    builder.Subscribe<CommandStartedEvent>(e =>
+                    {
+                        logger.LogDebug("Executing command {CommandName} \n {Command}", e.CommandName, e.Command.ToJson());
+                    });
+                };
                 return settings;
             });
 

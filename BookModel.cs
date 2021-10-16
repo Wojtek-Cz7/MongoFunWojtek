@@ -35,7 +35,17 @@ namespace MongoFunWojtek
 
         public BookType Type { get; set; }
 
-        public override string ToString() => $"{Idek.ToString()} - {Title} - {Author} - {ReleaseDate.Year} - {Type}";
+        public List<IReview> Reviews { get; set; } = new();
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"{Idek} - {Title} - {Author} - {ReleaseDate.Year} - {Type}");
+            foreach (var review in Reviews)
+                sb.AppendLine($"\t{review.Print()}");
+
+            return sb.ToString();
+        }
     }
 
 

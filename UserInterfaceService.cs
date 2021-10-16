@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
+using MongoFunWojtek.Reviews;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +65,15 @@ namespace MongoFunWojtek
                         case "removebooks":
                         await RemoveBooks();
                             break;
-
+                        case "addrevs":
+                            await AddSimpleReview();
+                            break;
+                        case "addreve":     
+                            await AddExpertReview();
+                            break;
+                        case "getsimple":
+                               await GetBooksWithSimpleReviews();
+                            break;
 
 
                         default:
@@ -162,6 +171,44 @@ namespace MongoFunWojtek
             var author = Console.ReadLine();
             var books = await _bookRepository.GetBooksByAuthorAsync(author);
             Console.WriteLine(string.Join(", ", books));
+        }
+
+        private async Task AddExpertReview()
+        {
+            Console.Write("Id: ");
+            var id = Console.ReadLine();
+            Console.Write("Overall: ");
+            var overall = int.Parse(Console.ReadLine()!);
+            Console.Write("Additional word: ");
+            var additionalWord = Console.ReadLine();
+            var review = new ExpertReview
+            {
+                Overall = overall,
+                AdditionalWord = additionalWord
+            };
+            var result = await _bookRepository.AddReviewToBookAsync(review, id);
+            Console.WriteLine($"Review added {result}");
+        }
+
+        private async Task AddSimpleReview()
+        {
+            Console.Write("Id: ");
+            var id = Console.ReadLine();
+            Console.Write("Overall: ");
+            var overall = int.Parse(Console.ReadLine()!);
+            var review = new SimpleReview
+            {
+                Overall = overall
+            };
+            var result = await _bookRepository.AddReviewToBookAsync(review, id);
+            Console.WriteLine($"Review added {result}");
+        }
+
+        private async Task GetBooksWithSimpleReviews()
+        {
+            var books = await _bookRepository.GetBooksWithSimpleReviewsAsync();
+            var booksStr = string.Join(Environment.NewLine, books);
+            Console.WriteLine(booksStr);
         }
     }
 }

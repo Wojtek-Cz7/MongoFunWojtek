@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoFunWojtek.Reviews;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,21 @@ namespace MongoFunWojtek
         public async Task<List<BookModel>> GetBooksNewerThanAsync(int year)
         {
             var filter = Builders<BookModel>.Filter.Gt(x => x.ReleaseDate, new DateTime(year,1,1));
+            return await _collection.Find(filter).ToListAsync();
+        }
+
+        public async Task<bool> AddReviewToBookAsync(IReview review, string bookId)
+        {
+            var filter = Builders<BookModel>.Filter.Eq(x => x.Idek, bookId.ToString());
+            var update = Builders<BookModel>.Update.Push(x => x.Reviews, review);
+            var result = await _collection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount == 1;
+        }
+
+        public async Task<List<BookModel>> GetBooksWithSimpleReviewsAsync()
+        {
+            var filter = Builders<BookModel>.Filter.ElemMatch(x => x.Reviews,
+                Builders<IReview>.Filter.OfType<SimpleReview>());
             return await _collection.Find(filter).ToListAsync();
         }
     }

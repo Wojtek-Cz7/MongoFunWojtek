@@ -19,5 +19,9 @@ namespace MongoFunWojtek
         Task<bool> RemoveBooksAsync(List<string> booksIds);
         Task<List<BookModel>> GetBooksNewerThanAsync(int year);
 
+        Task<bool> AddReviewToBookAsync(IReview review, string bookId);
+
+        Task<List<BookModel>> GetBooksWithSimpleReviewsAsync();
+
     }
 }

@@ -1,7 +1,9 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson.Serialization.Serializers;
+using MongoFunWojtek.Reviews;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +28,7 @@ namespace MongoFunWojtek
                 .SetElementName("author")
                 .SetDefaultValue(BookModel.DefaultAuthor)
                 .SetIgnoreIfDefault(true)
-                .SetSerializer(new AuthorStringSerializer());
+                .SetSerializer(new AuthorStringSerializer()); // custom serializer
 
                 map.MapProperty(x => x.ReleaseDate)
                     .SetElementName("releaseDate");
@@ -35,6 +37,14 @@ namespace MongoFunWojtek
                 map.MapProperty(x => x.Type)
                 .SetElementName("type")
                 .SetSerializer(new EnumSerializer<BookType>(BsonType.String));
+
+                map.MapProperty(x => x.Reviews)
+               .SetElementName("reviews");
+
+                BsonSerializer.RegisterDiscriminatorConvention(typeof(IReview), StandardDiscriminatorConvention.Scalar);
+                BsonClassMap.RegisterClassMap<SimpleReview>();
+                BsonClassMap.RegisterClassMap<ExpertReview>();
+
             }
             );
         }
