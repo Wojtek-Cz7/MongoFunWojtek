@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using System;
 using System.Threading.Tasks;
 
@@ -22,15 +23,7 @@ namespace MongoFunWojtek
 
             hostBuilder.ConfigureAppConfiguration(builder => { builder.AddJsonFile("appsettings.json"); });
 
-            hostBuilder.ConfigureServices((context, collection) =>
-            {
-                collection.AddLogging(builder =>
-                {
-                    builder.AddConfiguration(context.Configuration.GetSection("Logging"));
-                    builder.AddConsole();
-                });
-            }
-             );
+            hostBuilder.ConfigureServices(Installer.Install);
 
             await hostBuilder.Build().RunAsync();
         }
