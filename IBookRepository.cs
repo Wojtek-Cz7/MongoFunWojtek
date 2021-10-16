@@ -27,5 +27,7 @@ namespace MongoFunWojtek
 
         Task RemoveAllBooks();
 
+        Task<long> CountBooksAsync();
+
     }
 }

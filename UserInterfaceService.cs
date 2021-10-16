@@ -83,6 +83,9 @@ namespace MongoFunWojtek
                         case "reset":
                             await ResetToDefault();
                             break;
+                        case "count":
+                            await Count();
+                            break;
 
                         default:
                             break;
@@ -247,6 +250,12 @@ namespace MongoFunWojtek
         {
             await _bookRepository.RemoveAllBooks();
             await _bookRepository.AddBooksAsync(DefaultBooks.Books);
+        }
+
+        private async Task Count()
+        {
+            var count = await _bookRepository.CountBooksAsync();
+            Console.WriteLine($"Books count {count}");
         }
     }
 }

@@ -117,5 +117,14 @@ namespace MongoFunWojtek
             await _collection.DeleteManyAsync(filter);
         }
 
+        public async Task<long> CountBooksAsync()
+        {
+            var result = await _collection
+                .Aggregate()
+                .Count()
+                .SingleOrDefaultAsync();
+
+            return result?.Count ?? 0;
+        }
     }
 }
