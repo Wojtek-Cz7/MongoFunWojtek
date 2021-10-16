@@ -45,6 +45,8 @@ namespace MongoFunWojtek
                 );
 
 
+            // kolejność wstrzykiwania to kolejność uruchomień
+            collection.AddHostedService<MongoInitService>();
             collection.AddHostedService<UserInterfaceService>();
         }
     }
