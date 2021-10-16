@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoFunWojtek.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,12 @@ namespace MongoFunWojtek
 
         Task<long> CountBooksNewerThanAsync(DateTime dateTime);
         Task<long> CountBooksWithAtLeastOneReviewAsync();
+
+        Task<List<BookTypeCount>> GroupByTypesAsync();
+
+        Task<List<AuthorBookCountWithNewestDate>> GroupByAuthorsWithAtLeast1BookAsync();
+
+
 
     }
 }

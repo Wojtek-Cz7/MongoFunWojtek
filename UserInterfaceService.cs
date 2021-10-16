@@ -92,6 +92,12 @@ namespace MongoFunWojtek
                         case "countwithr":
                             await CountBooksWithAtLeastOneReview();
                             break;
+                        case "grouptypes":
+                            await GroupByTypes();
+                            break;
+                        case "groupauthor1":
+                            await GroupByAuthorsWithAtLeast1Book();
+                            break;
 
                         default:
                             break;
@@ -276,6 +282,19 @@ namespace MongoFunWojtek
             var count = await _bookRepository.CountBooksWithAtLeastOneReviewAsync();
             Console.WriteLine($"Books count {count}");
         }
+
+        private async Task GroupByTypes()
+        {
+            var bookTypeCounts = await _bookRepository.GroupByTypesAsync();
+            Console.WriteLine(string.Join("\n", bookTypeCounts));
+        }
+        private async Task GroupByAuthorsWithAtLeast1Book()
+        {
+            var authorBookCount = await _bookRepository.GroupByAuthorsWithAtLeast1BookAsync();
+            Console.WriteLine(string.Join("\n", authorBookCount));
+        }
+
+
 
     }
 }
