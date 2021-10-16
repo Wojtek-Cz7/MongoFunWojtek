@@ -33,7 +33,9 @@ namespace MongoFunWojtek
        // [BsonDateTimeOptions(DateOnly = true)]          
         public DateTime ReleaseDate { get; set; }
 
-        public override string ToString() => $"{Idek.ToString()} - {Title} - {Author} - {ReleaseDate.Year}";
+        public BookType Type { get; set; }
+
+        public override string ToString() => $"{Idek.ToString()} - {Title} - {Author} - {ReleaseDate.Year} - {Type}";
     }
 
 

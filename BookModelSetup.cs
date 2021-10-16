@@ -29,8 +29,11 @@ namespace MongoFunWojtek
 
                 map.MapProperty(x => x.ReleaseDate)
                     .SetElementName("releaseDate");
-                   
-                    //.SetSerializer(new DateTimeSerializer(true));
+                //.SetSerializer(new DateTimeSerializer(true));
+
+                map.MapProperty(x => x.Type)
+                .SetElementName("type")
+                .SetSerializer(new EnumSerializer<BookType>(BsonType.String));
             }
             );
         }
