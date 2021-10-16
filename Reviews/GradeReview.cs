@@ -6,24 +6,26 @@ using System.Threading.Tasks;
 
 namespace MongoFunWojtek.Reviews
 {
-    public class SimpleReview : IReview
+    class GradeReview : IReview
     {
 
 
-        public SimpleReview()
+        public GradeReview()
         {
         }
 
-        public SimpleReview(int overall)
+        public GradeReview(Grade grade)
         {
-            Overall = overall;
+            Grade = grade;
         }
 
 
-        public int Overall { get; set; }
+
+
+        public Grade Grade { get; set; }
         public string Print()
         {
-            return $"People say: {Overall}";
+            return $"GRADE: {Grade}";
         }
     }
 }

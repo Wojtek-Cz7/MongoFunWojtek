@@ -12,41 +12,50 @@ using System.Threading.Tasks;
 
 namespace MongoFunWojtek
 {
-    public static class BookModelSetup
-    {
-        public static void Setup()
-        {
-            BsonClassMap.RegisterClassMap<BookModel>(map =>
-            {
-                map.MapIdProperty(x => x.Idek)
-                .SetSerializer(new StringSerializer(BsonType.ObjectId))
-                .SetIdGenerator(StringObjectIdGenerator.Instance);
+	public static class BookModelSetup
+	{
+		public static void Setup()
+		{
+			var allConventionPack = new ConventionPack
+			{
+				new CamelCaseElementNameConvention(),
+				new StringIdStoredAsObjectIdConvention()
+			};
+			ConventionRegistry.Register("All", allConventionPack, t => true);
 
-                map.MapProperty(x => x.Title).SetElementName("title");
+			var reviewType = typeof(IReview);
+			var reviewsConventionPack = new ConventionPack
+			{
+				new ReviewDiscriminatorConvention()
+			};
+			ConventionRegistry.Register("Review", reviewsConventionPack,
+				type => type.GetInterfaces().Contains(reviewType));
 
-                map.MapProperty(x => x.Author)
-                .SetElementName("author")
-                .SetDefaultValue(BookModel.DefaultAuthor)
-                .SetIgnoreIfDefault(true)
-                .SetSerializer(new AuthorStringSerializer()); // custom serializer
+			BsonClassMap.RegisterClassMap<BookModel>(map =>
+			{
+				map.MapIdMember(x => x.Idek);
+				map.AutoMap();
+				map.GetMemberMap(x => x.Author)
+					.SetSerializer(new AuthorStringSerializer())
+					.SetDefaultValue(BookModel.DefaultAuthor)
+					.SetIgnoreIfDefault(true);
 
-                map.MapProperty(x => x.ReleaseDate)
-                    .SetElementName("releaseDate");
-                //.SetSerializer(new DateTimeSerializer(true));
+				map.GetMemberMap(x => x.ReleaseDate);
+					//.SetSerializer(new DateTimeSerializer(true));
 
-                map.MapProperty(x => x.Type)
-                .SetElementName("type")
-                .SetSerializer(new EnumSerializer<BookType>(BsonType.String));
+				map.GetMemberMap(x => x.Type)
+					.SetSerializer(new EnumSerializer<BookType>(BsonType.String));
+			});
 
-                map.MapProperty(x => x.Reviews)
-               .SetElementName("reviews");
-
-                BsonSerializer.RegisterDiscriminatorConvention(typeof(IReview), StandardDiscriminatorConvention.Scalar);
-                BsonClassMap.RegisterClassMap<SimpleReview>();
-                BsonClassMap.RegisterClassMap<ExpertReview>();
-
-            }
-            );
-        }
-    }
+			BsonSerializer.RegisterDiscriminatorConvention(typeof(IReview), StandardDiscriminatorConvention.Scalar);
+			BsonClassMap.RegisterClassMap<SimpleReview>();
+			BsonClassMap.RegisterClassMap<ExpertReview>();
+			BsonClassMap.RegisterClassMap<GradeReview>(map =>
+			{
+				map.AutoMap();
+				map.GetMemberMap(x => x.Grade)
+					.SetSerializer(new EnumSerializer<Grade>(BsonType.String));
+			});
+		}
+	}
 }

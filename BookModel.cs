@@ -13,6 +13,29 @@ namespace MongoFunWojtek
 
         public const string DefaultAuthor = "Unknown";
 
+        // kostruktory
+
+        public BookModel()
+        {
+        }
+
+        public BookModel(string title, string author, DateTime releaseDate, BookType type, List<IReview> reviews)
+        {
+            Title = title;
+            Author = author;
+            ReleaseDate = releaseDate;
+            Type = type;
+            Reviews = reviews;
+        }
+
+        public BookModel(string idek, string title, string author, DateTime releaseDate, BookType type, List<IReview> reviews)
+            : this(title, author, releaseDate, type, reviews)
+        {
+            Idek = idek;
+        }
+
+
+
         //[BsonId] 
         public string Idek { get; set; }
 

@@ -74,6 +74,13 @@ namespace MongoFunWojtek
                         case "getsimple":
                                await GetBooksWithSimpleReviews();
                             break;
+                        case "getwithgrade":
+                            await GetBooksWithGradeReviews();
+                            break;
+                        case "addrevg":
+                            await AddGradeReviewToBook();
+                            break;
+
 
 
                         default:
@@ -209,6 +216,30 @@ namespace MongoFunWojtek
             var books = await _bookRepository.GetBooksWithSimpleReviewsAsync();
             var booksStr = string.Join(Environment.NewLine, books);
             Console.WriteLine(booksStr);
+        }
+
+        private async Task GetBooksWithGradeReviews()
+        {
+            //Console.Write("Grade: ");
+            //var grade = Enum.Parse<Grade>(Console.ReadLine()!);
+            var books = await _bookRepository.GetBooksWithGradeReviewsAsync();
+            var booksStr = string.Join(Environment.NewLine, books);
+            Console.WriteLine(booksStr);
+        }
+
+        private async Task AddGradeReviewToBook()
+        {
+            Console.Write("Id: ");
+            var id = Console.ReadLine();
+            
+            Console.Write("Grade: ");
+            var grade = Enum.Parse<Grade>(Console.ReadLine()!);
+            var review = new GradeReview
+            {
+                Grade = grade
+            };
+            var added = await _bookRepository.AddReviewToBookAsync(review, id);
+            Console.WriteLine($"Review{(added ? "" : " not")} added");
         }
     }
 }

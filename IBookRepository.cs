@@ -23,5 +23,7 @@ namespace MongoFunWojtek
 
         Task<List<BookModel>> GetBooksWithSimpleReviewsAsync();
 
+        Task<List<BookModel>> GetBooksWithGradeReviewsAsync();
+
     }
 }

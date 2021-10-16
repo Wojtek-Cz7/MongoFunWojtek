@@ -103,5 +103,12 @@ namespace MongoFunWojtek
                 Builders<IReview>.Filter.OfType<SimpleReview>());
             return await _collection.Find(filter).ToListAsync();
         }
+
+        public async Task<List<BookModel>> GetBooksWithGradeReviewsAsync()
+        {
+            var filter = Builders<BookModel>.Filter.ElemMatch(x => x.Reviews,                
+                    Builders<IReview>.Filter.OfType<GradeReview>());
+            return await _collection.Find(filter).ToListAsync();
+        }
     }
 }
