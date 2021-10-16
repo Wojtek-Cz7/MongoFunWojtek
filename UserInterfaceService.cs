@@ -80,8 +80,9 @@ namespace MongoFunWojtek
                         case "addrevg":
                             await AddGradeReviewToBook();
                             break;
-
-
+                        case "reset":
+                            await ResetToDefault();
+                            break;
 
                         default:
                             break;
@@ -240,6 +241,12 @@ namespace MongoFunWojtek
             };
             var added = await _bookRepository.AddReviewToBookAsync(review, id);
             Console.WriteLine($"Review{(added ? "" : " not")} added");
+        }
+
+        private async Task ResetToDefault()
+        {
+            await _bookRepository.RemoveAllBooks();
+            await _bookRepository.AddBooksAsync(DefaultBooks.Books);
         }
     }
 }

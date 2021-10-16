@@ -110,5 +110,12 @@ namespace MongoFunWojtek
                     Builders<IReview>.Filter.OfType<GradeReview>());
             return await _collection.Find(filter).ToListAsync();
         }
+
+        public async Task RemoveAllBooks()
+        {
+            var filter = Builders<BookModel>.Filter.Empty;
+            await _collection.DeleteManyAsync(filter);
+        }
+
     }
 }

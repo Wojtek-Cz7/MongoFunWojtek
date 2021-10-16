@@ -25,5 +25,7 @@ namespace MongoFunWojtek
 
         Task<List<BookModel>> GetBooksWithGradeReviewsAsync();
 
+        Task RemoveAllBooks();
+
     }
 }

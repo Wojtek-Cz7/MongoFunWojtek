@@ -11,6 +11,8 @@ namespace MongoFunWojtek
         Unknown = 0,
         Drama,
         Epic,
-        Lyric
+        Lyric,
+        DailyNewspaper,
+        Article
     }
 }
