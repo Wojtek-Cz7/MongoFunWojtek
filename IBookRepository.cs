@@ -11,12 +11,12 @@ namespace MongoFunWojtek
     {
         Task<bool> AddBookAsync(BookModel bookModel);
         Task<List<BookModel>> GetBooksAsync();
-        Task<bool> RemoveBookAsync(ObjectId bookId);
+        Task<bool> RemoveBookAsync(string bookId);
 
         Task<bool> AddBooksAsync(List<BookModel> bookModels);
         Task<List<BookModel>> GetBooksByAuthorAsync(string author);
 
-        Task<bool> RemoveBooksAsync(List<ObjectId> booksIds);
+        Task<bool> RemoveBooksAsync(List<string> booksIds);
         Task<List<BookModel>> GetBooksNewerThanAsync(int year);
 
     }

@@ -50,6 +50,8 @@ namespace MongoFunWojtek
             collection.AddSingleton<IBookRepository, BookRepository>();
             collection.AddHostedService<MongoInitService>();
             collection.AddHostedService<UserInterfaceService>();
+
+            BookModelSetup.Setup();
         }
     }
 }

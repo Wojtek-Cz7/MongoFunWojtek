@@ -106,7 +106,7 @@ namespace MongoFunWojtek
             {
                 Title = title,
                 Author = author,
-                ReleaseDate = new DateTime(int.Parse(year!), 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                ReleaseDate = new DateTime(int.Parse(year!), 1, 1)
             };
             var added = await _bookRepository.AddBookAsync(book);
             Console.WriteLine($"Book{(added ? "" : " not")} added");
@@ -115,9 +115,8 @@ namespace MongoFunWojtek
         private async Task RemoveBook()
         {
             Console.Write("Id: ");
-            var id = Console.ReadLine();
-            var objectId = ObjectId.Parse(id);
-            var removed = await _bookRepository.RemoveBookAsync(objectId);
+            var id = Console.ReadLine();            
+            var removed = await _bookRepository.RemoveBookAsync(id);
             Console.WriteLine($"Book{(removed ? "" : " not")} removed");
         }
 

@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,31 @@ namespace MongoFunWojtek
 {
     public class BookModel
     {
-        public ObjectId Id { get; set; }
+
+        public const string DefaultAuthor = "Unknown";
+
+        //[BsonId] 
+        public string Idek { get; set; }
+
+
+
+        //[BsonElement("title")] 
         public string Title { get; set; }
-        public string Author { get; set; }
+
+        //[BsonElement("author")]
+        //[BsonIgnoreIfNull]
+        //[BsonDefaultValue(DefaultAuthor)] // definiuje defaultową wartość
+        //[BsonIgnoreIfDefault]
+        public string Author { get; set; } = DefaultAuthor;
+
+
+
+        //[BsonElement("releaseDate")] 
+       // [BsonDateTimeOptions(DateOnly = true)]          
         public DateTime ReleaseDate { get; set; }
 
-        public override string ToString() => $"{Id.ToString()} - {Title} - {Author} - {ReleaseDate.Year}";
+        public override string ToString() => $"{Idek.ToString()} - {Title} - {Author} - {ReleaseDate.Year}";
     }
 
-    
+
 }

@@ -49,9 +49,9 @@ namespace MongoFunWojtek
 
         }
 
-        public async Task<bool> RemoveBookAsync(ObjectId bookId)
+        public async Task<bool> RemoveBookAsync(string bookId)
         {
-            var filter = Builders<BookModel>.Filter.Eq(x => x.Id, bookId);  // to jest filtr wskazujący na rekord do usunięcia
+            var filter = Builders<BookModel>.Filter.Eq(x => x.Idek, bookId);  // to jest filtr wskazujący na rekord do usunięcia
             var result = await _collection.DeleteOneAsync(filter);
             return result.DeletedCount > 0;
         }
@@ -75,9 +75,9 @@ namespace MongoFunWojtek
             return await _collection.Find(filter).ToListAsync();
         }
 
-        public async Task<bool> RemoveBooksAsync(List<ObjectId> booksIds)
+        public async Task<bool> RemoveBooksAsync(List<string> booksIds)
         {
-            var filter = Builders<BookModel>.Filter.In(x => x.Id, booksIds); 
+            var filter = Builders<BookModel>.Filter.In(x => x.Idek, booksIds); 
             var result = await _collection.DeleteManyAsync(filter);
             return result.DeletedCount > 0;
         }
