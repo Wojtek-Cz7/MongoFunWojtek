@@ -25,7 +25,8 @@ namespace MongoFunWojtek
                 map.MapProperty(x => x.Author)
                 .SetElementName("author")
                 .SetDefaultValue(BookModel.DefaultAuthor)
-                .SetIgnoreIfDefault(true);
+                .SetIgnoreIfDefault(true)
+                .SetSerializer(new AuthorStringSerializer());
 
                 map.MapProperty(x => x.ReleaseDate)
                     .SetElementName("releaseDate");
