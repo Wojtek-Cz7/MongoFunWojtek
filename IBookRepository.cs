@@ -37,6 +37,12 @@ namespace MongoFunWojtek
 
         Task<List<AuthorBookCountWithNewestDate>> GroupByAuthorsWithAtLeast1BookAsync();
 
+        Task<List<string>> GetBooksTitlesAsync();
+
+        Task<(List<BookCountByDateStart> Centuries, List<BookCountByDateStart> Decades)> GetBooksCountInCenturiesAndDecadesAsync();
+
+        Task<List<AuthorAverageOverallOfExpertReviews>> AverageOverallOfExpertReviewsByAuthorAsync();
+
 
 
     }

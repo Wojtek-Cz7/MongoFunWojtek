@@ -98,6 +98,12 @@ namespace MongoFunWojtek
                         case "groupauthor1":
                             await GroupByAuthorsWithAtLeast1Book();
                             break;
+                        case "titles":
+                            await GetTitles();
+                            break;
+                        case "facetbucket":
+                            await GetBooksCountInCenturiesAndDecades();
+                            break;
 
                         default:
                             break;
@@ -293,6 +299,25 @@ namespace MongoFunWojtek
             var authorBookCount = await _bookRepository.GroupByAuthorsWithAtLeast1BookAsync();
             Console.WriteLine(string.Join("\n", authorBookCount));
         }
+
+        private async Task GetTitles()
+        {
+            var titles = await _bookRepository.GetBooksTitlesAsync();
+            var titlesStr = string.Join(Environment.NewLine, titles);
+            Console.WriteLine(titlesStr);
+        }
+
+        private async Task GetBooksCountInCenturiesAndDecades()
+        {
+            var (centuries, decades) = await _bookRepository.GetBooksCountInCenturiesAndDecadesAsync();
+            Console.WriteLine("Centuries:");
+            var centuriesStr = string.Join(Environment.NewLine, centuries.Select(x => $"\t{x}"));
+            Console.WriteLine(centuriesStr);
+            Console.WriteLine("Decades:");
+            var decadesStr = string.Join(Environment.NewLine, decades.Select(x => $"\t{x}"));
+            Console.WriteLine(decadesStr);
+        }
+
 
 
 

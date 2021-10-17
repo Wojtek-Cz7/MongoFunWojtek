@@ -177,5 +177,133 @@ namespace MongoFunWojtek
                 .ToListAsync();
             return result;
         }
+
+        public async Task<List<string>> GetBooksTitlesAsync()
+        {
+            var result = await _collection
+                .Aggregate()
+                .Project(x => new
+                {
+                    x.Title
+                })
+                .ToListAsync();
+            return result.Select(x => x.Title).ToList();
+        }
+
+        public async Task<(List<BookCountByDateStart> Centuries, List<BookCountByDateStart> Decades)> GetBooksCountInCenturiesAndDecadesAsync()
+        {
+            var centuriesDates = new List<DateTime>();
+            for (var i = 1400; i <= 2100; i += 100)
+                centuriesDates.Add(new DateTime(i, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            var decadesDates = new List<DateTime>();
+            for (var i = 1940; i <= 2030; i += 10)
+                decadesDates.Add(new DateTime(i, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            var result = await _collection
+                .Aggregate()
+                .Facet(AggregateFacet.Create("Centuries",
+                        new EmptyPipelineDefinition<BookModel>().Bucket(
+                            x => x.ReleaseDate,
+                            centuriesDates,
+                            x => new
+                            {
+                                _id = default(DateTime),  // musi być _id
+                                count = x.Count()
+                            },
+                            new AggregateBucketOptions<DateTime>
+                            {
+                                DefaultBucket = new DateTime(1, 1, 1)
+                            }
+                        )
+                    ),
+                    AggregateFacet.Create("Decades",
+                        new EmptyPipelineDefinition<BookModel>().Bucket(
+                            x => x.ReleaseDate,
+                            decadesDates,
+                            x => new
+                            {
+                                _id = default(DateTime),
+                                count = x.Count()
+                            },
+                            new AggregateBucketOptions<DateTime>
+                            {
+                                DefaultBucket = new DateTime(1, 1, 1)
+                            }
+                        )
+                    )
+                ).SingleAsync();
+
+            var result1 = FacetOutput(new { _id = default(DateTime), count = default(int) }, result.Facets[0]);
+            var result2 = FacetOutput(new { _id = default(DateTime), count = default(int) }, result.Facets[1]);
+
+            var centuries = result1.Select(x => new BookCountByDateStart
+            {
+                DateStart = x._id,
+                Count = x.count
+            }).ToList();
+            var decades = result2.Select(x => new BookCountByDateStart
+            {
+                DateStart = x._id,
+                Count = x.count
+            }).ToList();
+
+            return (centuries, decades);
+        }
+
+        // to jest trudne :O
+        private static IReadOnlyList<T> FacetOutput<T>(T _, AggregateFacetResult result) => result.Output<T>();
+
+
+        // opcja prosta, ale mało wydajna
+        public async Task<List<AuthorAverageOverallOfExpertReviews>> AverageOverallOfExpertReviewsByAuthorAsync()
+        {
+            var result = await _collection.Aggregate()
+                .Unwind<BookModel, BookAuthorUnwindReviewModel>(x => x.Reviews)
+                .Match(Builders<BookAuthorUnwindReviewModel>.Filter.OfType<IReview, ExpertReview>(x => x.Reviews))
+                .Group(x => x.Author, grouping => new AuthorAverageOverallOfExpertReviews
+                {
+                    Author = grouping.Key,
+                    Average = grouping.Average(x => ((ExpertReview)x.Reviews).Overall)
+                })
+                .ToListAsync();
+
+            return result;
+        }
+
+        // OPCJA EXPERT
+
+        //    public async Task<List<AuthorAverageOverallOfExperts>> GetAverageOverallOfExpertReviewsByAuthorAsync()
+        //    {
+        //        var result = await _collection
+        //            .Aggregate()
+        //            .Project(
+        //                (ProjectionDefinition<BookModel, BookAuthorFilteredReviewModel>)
+        //                $@"{{
+        //    'author' : '$author',
+        //    'reviews' : {{
+        //        '$filter' : {{
+        //            'input' : '$reviews',
+        //            'as' : 'item',
+        //            'cond' : {{
+        //                '$eq' : ['$$item._t', 'Expert']
+        //            }}
+        //        }}
+        //    }}
+        //}}")
+        //            .Unwind<BookAuthorFilteredReviewModel, BookAuthorReviewUnwindModel>(x => x.Reviews)
+        //            .Group(x => x.Author, grouping => new AuthorAverageOverallOfExperts
+        //            {
+        //                Author = grouping.Key,
+        //                Average = grouping.Average(x => ((ExpertReview)x.Reviews).Overall)
+        //            })
+        //            .ToListAsync();
+        //        return result;
+        //    }
+
+
     }
+
+
+
 }
